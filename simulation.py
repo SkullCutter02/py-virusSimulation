@@ -40,7 +40,9 @@ class ResistantVirus(SimpleVirus):
     def reproduce(self, popDensity, activeDrugs):
         # activeDrugs: a list of the drug names acting on this virus particle (a list of strings).
         prob = self.maxBirthProb * (1 - popDensity)
+        # print('move')
         if len(activeDrugs) > 0 and random.random() <= prob:
+            # print('adsf')
             newMaxBirthProb = 0
             newClearProb = 0
             newMutProb = 0
@@ -106,6 +108,6 @@ class ResistantPatient(SimplePatient):
                     popDensity = len(self.viruses) / self.maxPop
                     self.viruses.append(virus.reproduce(popDensity, self.drugs))
         except NoChildException:
-            print("Error")
+            pass
         return int(len(self.viruses))
 
