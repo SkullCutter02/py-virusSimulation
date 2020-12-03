@@ -40,7 +40,7 @@ def simulate_drug():
     patient.addPrescription("guttagonal")
     for i in range(150):
         pop = patient.update()
-        xPlotPoints.append(i+150)
+        xPlotPoints.append(i + 150)
         yPlotPoints.append(pop)
     plt.plot(xPlotPoints, yPlotPoints)
     plt.ylabel("Virus Population")

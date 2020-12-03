@@ -18,39 +18,9 @@ class SimpleVirus(object):
 
     def reproduce(self, popDensity):
         prob = self.maxBirthProb * (1 - popDensity)
-        if random.random() <= prob:
+        prob2 = random.random() / 10
+        if prob2 <= prob:
             return SimpleVirus(self.maxBirthProb, self.clearProb)
-        else:
-            raise NoChildException
-
-# ResistantVirus
-class ResistantVirus(SimpleVirus):
-    def __init__(self, maxBirthProb, clearProb, resistances, mutProb):
-        super().__init__(maxBirthProb, clearProb)
-        self.maxBirthProb = maxBirthProb
-        self.clearProb = clearProb
-        self.resistances = resistances
-        self.mutProb = mutProb
-
-    def getResistance(self, drug):
-        for k, v in self.resistances.items():
-            if k.lower() == drug.lower():
-                return v
-
-    def reproduce(self, popDensity, activeDrugs):
-        # activeDrugs: a list of the drug names acting on this virus particle (a list of strings).
-        prob = self.maxBirthProb * (1 - popDensity)
-        # print('move')
-        if len(activeDrugs) > 0 and random.random() <= prob:
-            # print('adsf')
-            newMaxBirthProb = 0
-            newClearProb = 0
-            newMutProb = 0
-            newResistances = {}
-            for k, v in self.resistances.items():
-                newResistances[k] = True if random.random() <= 1 - self.mutProb else False
-                newResistances[k] = not newResistances[k] if random.random() <= self.mutProb else newResistances[k]
-                return ResistantVirus(newMaxBirthProb, newClearProb, newResistances, newMutProb)
         else:
             raise NoChildException
 
@@ -71,8 +41,36 @@ class SimplePatient(object):
                     density = self.getTotalPop() / self.maxPop
                     self.viruses.append(virus.reproduce(density))
         except NoChildException:
-            print("Error")
+            pass
         return int(len(self.viruses))
+
+# ResistantVirus
+class ResistantVirus(SimpleVirus):
+    def __init__(self, maxBirthProb, clearProb, resistances, mutProb):
+        super().__init__(maxBirthProb, clearProb)
+        self.maxBirthProb = maxBirthProb
+        self.clearProb = clearProb
+        self.resistances = resistances
+        self.mutProb = mutProb
+
+    def getResistance(self, drug):
+        for k, v in self.resistances.items():
+            if k.lower() == drug.lower():
+                return v
+
+    def reproduce(self, popDensity, activeDrugs):
+        prob = self.maxBirthProb * (1 - popDensity)
+        prob2 = random.random() / 10
+        # if len(activeDrugs) > 0 and prob2 <= prob:
+        if prob2 <= prob:
+            newResistances = {}
+            for k, v in self.resistances.items():
+                newResistances[k] = True if random.random() <= 1 - self.mutProb else False
+                newResistances[k] = not newResistances[k] if random.random() <= self.mutProb else newResistances[k]
+                return ResistantVirus(self.maxBirthProb, self.clearProb, newResistances, self.mutProb)
+        else:
+            raise NoChildException
+
 
 class ResistantPatient(SimplePatient):
     def __init__(self, viruses, maxPop):
