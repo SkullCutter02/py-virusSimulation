@@ -1,13 +1,7 @@
 import matplotlib.pyplot as plt
 from simulation import *
-from scipy.stats import norm
-import numpy
-
-def meanOfDistribution(val):
-    acc = 0
-    for x in range(len(val)):
-        acc += val[x]
-    return acc / len(val)
+import numpy as np
+from scipy.optimize import curve_fit
 
 def simulate_simple():
     population = 100
@@ -57,6 +51,9 @@ def simulate_drug():
 
 # simulate_drug()
 
+def gaussian(x, mean, amplitude, standard_deviation):
+    return amplitude * np.exp( - ((x - mean) / standard_deviation) ** 2)
+
 def simulateDelayed():
     steps = int(input("300/150/75/0"))
     additionalSteps = 150
@@ -77,18 +74,37 @@ def simulateDelayed():
         pop = patient.update()
         columnValues.append(i)
         virusValues.append(pop)
-    mu = meanOfDistribution(virusValues)
-    print(mu)
-    sigma = numpy.std(virusValues)
-    x = mu + sigma * numpy.random.randn(10000)
-    numBins = columnValues[-1]
-    n, bins, patches = plt.hist(x, numBins, density=1, facecolor="blue", alpha=0.5)
-    y = norm.pdf(bins, mu, sigma)
-    plt.plot(bins, y, "r--")
-    plt.xlabel("Virus Population")
-    plt.ylabel("Patients")
-    plt.subplots_adjust(left=0.15)
-    plt.show()
+    # mu = meanOfDistribution(virusValues)
+    # sigma = numpy.std(virusValues)
+    # # x = mu + sigma * numpy.random.randn(virusValues[-1], steps + additionalSteps)
+    # x = mu + sigma
+    # numBins = columnValues[-1]
+    # n, bins, patches = plt.hist(x, numBins, density=1, facecolor="blue", alpha=0.5)
+    # y = norm.pdf(bins, mu, sigma)
+    # plt.plot(bins, y, "r--")
+    # plt.xlabel("Virus Population")
+    # plt.ylabel("Patients")
+    # plt.subplots_adjust(left=0.15)
+    # plt.show()
+
+    # https://realpython.com/python-histograms/
+    # n, bins, patches = plt.hist(virusValues, bins="auto", color="#0504aa", alpha=0.7, rwidth=0.85)
+    n, bins, _ = plt.hist(virusValues, bins='auto', label='histogram')
+    # plt.grid(axis="y", alpha=0.75)
+    # plt.xlabel("Virus Population")
+    # plt.ylabel("Patients")
+    # plt.title(f"Virus Population vs Patient Histogram at {steps} steps")
+
+    bin_centers = bins[:-1] + np.diff(bins) / 2
+    popt, _ = curve_fit(gaussian, bin_centers, n, p0=[1., 0., 1.])
+
+    x_interval_for_fit = np.linspace(bins[0], bins[-1], 10000)
+    plt.plot(x_interval_for_fit, gaussian(x_interval_for_fit, *popt), label='fit')
+    plt.legend()
+
+    # maxFreq = n.max()
+    # plt.ylim(ymax=np.ceil(maxFreq / 10) * 10 if maxFreq % 10 else maxFreq + 10)
+    # plt.show()
 
 simulateDelayed()
 
