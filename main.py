@@ -88,23 +88,59 @@ def simulateDelayed():
     # plt.show()
 
     # https://realpython.com/python-histograms/
-    # n, bins, patches = plt.hist(virusValues, bins="auto", color="#0504aa", alpha=0.7, rwidth=0.85)
-    n, bins, _ = plt.hist(virusValues, bins='auto', label='histogram')
-    # plt.grid(axis="y", alpha=0.75)
-    # plt.xlabel("Virus Population")
-    # plt.ylabel("Patients")
-    # plt.title(f"Virus Population vs Patient Histogram at {steps} steps")
+    # n, bins, _ = plt.hist(virusValues, bins='auto', label='histogram')
+    n, bins, patches = plt.hist(virusValues, bins="auto", color="#0504aa", alpha=0.7, rwidth=0.85)
+    plt.grid(axis="y", alpha=0.75)
+    plt.xlabel("Virus Population")
+    plt.ylabel("Patients")
+    plt.title(f"Virus Population vs Patient Histogram at {steps} steps")
+    maxFreq = n.max()
+    plt.ylim(ymax=np.ceil(maxFreq / 10) * 10 if maxFreq % 10 else maxFreq + 10)
+    plt.show()
 
-    bin_centers = bins[:-1] + np.diff(bins) / 2
-    popt, _ = curve_fit(gaussian, bin_centers, n, p0=[1., 0., 1.])
+    # bin_centers = bins[:-1] + np.diff(bins) / 2
+    # popt, _ = curve_fit(gaussian, bin_centers, n, p0=[1., 0., 1.])
+    #
+    # x_interval_for_fit = np.linspace(bins[0], bins[-1], 10000)
+    # plt.plot(x_interval_for_fit, gaussian(x_interval_for_fit, *popt), label='fit')
+    # plt.legend()
 
-    x_interval_for_fit = np.linspace(bins[0], bins[-1], 10000)
-    plt.plot(x_interval_for_fit, gaussian(x_interval_for_fit, *popt), label='fit')
-    plt.legend()
 
-    # maxFreq = n.max()
-    # plt.ylim(ymax=np.ceil(maxFreq / 10) * 10 if maxFreq % 10 else maxFreq + 10)
-    # plt.show()
+# simulateDelayed()
 
-simulateDelayed()
+def simulateTwoDrugs():
+    inputSteps = int(input("300/150/75/0"))
+    steps = 150
+    population = 100
+    maxPopulation = 1000
+    pop = []
+    for x in range(population):
+        virus = ResistantVirus(0.1, 0.05, {"guttagonal": False, "grimpex": False}, 0.005)
+        pop.append(virus)
+    patient = ResistantPatient(pop, maxPopulation)
+    columnValues = []
+    virusValues = []
+    for i in range(steps):
+        pop = patient.update()
+        columnValues.append(i)
+        virusValues.append(pop)
+    patient.addPrescription("guttagonal")
+    for i in range(inputSteps + steps + 1):
+        pop = patient.update()
+        columnValues.append(i)
+        virusValues.append(pop)
+    patient.addPrescription("grimpex")
+    for i in range(steps + steps + inputSteps + 1):
+        pop = patient.update()
+        columnValues.append(i)
+        virusValues.append(pop)
+    n, bins, patches = plt.hist(virusValues, bins="auto", color="#0504aa", alpha=0.7, rwidth=0.85)
+    plt.grid(axis="y", alpha=0.75)
+    plt.xlabel("Virus Population")
+    plt.ylabel("Patients")
+    plt.title(f"Virus Population vs Patient Histogram at {inputSteps} steps")
+    maxFreq = n.max()
+    plt.ylim(ymax=np.ceil(maxFreq / 10) * 10 if maxFreq % 10 else maxFreq + 10)
+    plt.show()
 
+simulateTwoDrugs()
