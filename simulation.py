@@ -61,7 +61,6 @@ class ResistantVirus(SimpleVirus):
     def reproduce(self, popDensity, activeDrugs):
         prob = self.maxBirthProb * (1 - popDensity)
         prob2 = random.random() / 10
-        # if len(activeDrugs) > 0 and prob2 <= prob:
         if prob2 <= prob:
             newResistances = {}
             for k, v in self.resistances.items():
