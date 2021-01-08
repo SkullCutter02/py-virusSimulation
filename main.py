@@ -56,7 +56,6 @@ def simulateDelayed():
     population = 100
     maxPopulation = 1000
     repeats = int(input("How many times do you want to repeat the experiment? "))
-    columnValues = []
     virusValues = []
     for number in range(repeats):
         pop = []
@@ -73,8 +72,6 @@ def simulateDelayed():
             pop = patient.update()
             tempVirusValues.append(pop)
         virusValues.append(tempVirusValues[-1])
-        print(tempVirusValues[-1])
-        columnValues.append(1)
     n, bins, patches = plt.hist(virusValues, bins="auto", color="#0504aa", alpha=0.7, rwidth=0.85)
     plt.grid(axis="y", alpha=0.75)
     plt.xlabel("Virus Population")
@@ -87,7 +84,39 @@ def simulateDelayed():
 # simulateDelayed()
 
 def simulateTreatment():
-    pass
+    steps = 150
+    population = 100
+    maxPopulation = 1000
+    repeats = 30
+    virusValues = []
+    for con in [300, 150, 75, 0]:
+        for i in range(repeats):
+            pop = []
+            for _ in range(population):
+                virus = ResistantVirus(0.1, 0.05, {"guttagonal", False, "grimpex", False}, 0.005)
+                pop.append(virus)
+            patient = ResistantPatient(pop, maxPopulation)
+            tempVirusValues = []
+            for k in range(steps):
+                pop = patient.update()
+                tempVirusValues.append(pop)
+            # administer second drug
+            patient.addPrescription("guttagonol")
+            for k in range(con):
+                pop = patient.update()
+                tempVirusValues.append(pop)
+            for k in range(steps):
+                pop = patient.update()
+                tempVirusValues.append(pop)
+            virusValues.append(tempVirusValues[-1])
+    n, bins, patches = plt.hist(virusValues, bins="auto", color="#0504aa", alpha=0.7, rwidth=0.85)
+    plt.grid(axis="y", alpha=0.75)
+    plt.xlabel("Virus Population")
+    plt.ylabel("Patients")
+    plt.title(f"Virus Population vs Patient Histogram")
+    maxFreq = n.max()
+    plt.ylim(ymax=np.ceil(maxFreq / 10) * 10 if maxFreq % 10 else maxFreq + 10)
+    plt.show()
 
 simulateTreatment()
 
