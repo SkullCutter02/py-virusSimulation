@@ -75,21 +75,21 @@ def simulateDelayed():
         virusValues.append(tempVirusValues[-1])
         print(tempVirusValues[-1])
         columnValues.append(1)
-    # n, bins, patches = plt.hist(virusValues, bins="auto", color="#0504aa", alpha=0.7, rwidth=0.85)
-    # plt.grid(axis="y", alpha=0.75)
-    # plt.xlabel("Virus Population")
-    # plt.ylabel("Patients")
-    # plt.title(f"Virus Population vs Patient Histogram at {steps} steps")
-    # maxFreq = n.max()
-    # plt.ylim(ymax=np.ceil(maxFreq / 10) * 10 if maxFreq % 10 else maxFreq + 10)
-    # plt.show()
+    n, bins, patches = plt.hist(virusValues, bins="auto", color="#0504aa", alpha=0.7, rwidth=0.85)
+    plt.grid(axis="y", alpha=0.75)
+    plt.xlabel("Virus Population")
+    plt.ylabel("Patients")
+    plt.title(f"Virus Population vs Patient Histogram at {steps} steps")
+    maxFreq = n.max()
+    plt.ylim(ymax=np.ceil(maxFreq / 10) * 10 if maxFreq % 10 else maxFreq + 10)
+    plt.show()
 
-simulateDelayed()
+# simulateDelayed()
 
 def simulateTreatment():
     pass
 
-# simulateTreatment()
+simulateTreatment()
 
 def simulateTwoDrugs():
     inputSteps = int(input("300/150/75/0"))
